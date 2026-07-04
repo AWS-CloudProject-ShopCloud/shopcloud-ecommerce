@@ -1,0 +1,33 @@
+# ─── Personal / Internal Files (not for GitHub) ─────────────────────────────
+VIDEO_RECORDING_GUIDE.md
+STARTING_NEW_LAB_SESSION.md
+
+# ─── Environment & Secrets ────────────────────────────────────────────────────
+backend/.env
+.env
+.env.local
+.env.*
+!.env.example
+
+# ─── Dependencies ─────────────────────────────────────────────────────────────
+node_modules/
+backend/node_modules/
+
+# ─── Build / Cache ────────────────────────────────────────────────────────────
+.cache/
+dist/
+*.log
+npm-debug.log*
+
+# ─── OS Files ─────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ─── IDE ──────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln

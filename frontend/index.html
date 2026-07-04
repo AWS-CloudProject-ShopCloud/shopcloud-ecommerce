@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShopCloud — Authentication</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<div class="auth-split">
+  <!-- Left Side: Auth Forms -->
+  <div class="auth-split-left">
+    <div style="margin-bottom: 2rem;">
+      <div style="font-weight: 700; font-size: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-main);"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        ShopCloud
+      </div>
+      <p class="text-muted mt-4">Welcome back. Log in to access your dashboard.</p>
+    </div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="loginTab" onclick="switchTab('login')">Log In</button>
+      <button class="auth-tab" id="registerTab" onclick="switchTab('register')">Register</button>
+    </div>
+
+    <!-- Login Form -->
+    <form id="loginForm" onsubmit="handleLogin(event)" novalidate>
+      <div class="form-group">
+        <label class="form-label" for="loginEmail">Email Address</label>
+        <input id="loginEmail" type="email" class="form-input" placeholder="admin@example.com" required />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="loginPassword">Password</label>
+        <div class="search-wrapper">
+          <input id="loginPassword" type="password" class="form-input" placeholder="Enter your password" required style="padding-left: 0.75rem;" />
+        </div>
+      </div>
+      <button type="submit" id="loginBtn" class="btn btn-primary btn-full mt-4" style="height: 40px;">
+        <span id="loginBtnText">Continue</span>
+      </button>
+    </form>
+
+    <!-- Register Form -->
+    <form id="registerForm" style="display:none;" onsubmit="handleRegister(event)" novalidate>
+      <div class="form-group">
+        <label class="form-label" for="regName">Full Name</label>
+        <input id="regName" type="text" class="form-input" placeholder="John Doe" required />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="regEmail">Email Address</label>
+        <input id="regEmail" type="email" class="form-input" placeholder="you@example.com" required />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="regPassword">Password</label>
+        <input id="regPassword" type="password" class="form-input" placeholder="Min 8 characters" required />
+      </div>
+      <button type="submit" id="registerBtn" class="btn btn-primary btn-full mt-4" style="height: 40px;">
+        <span id="registerBtnText">Create Account</span>
+      </button>
+    </form>
+  </div>
+
+  <!-- Right Side: Product Showcase / Architecture -->
+  <div class="auth-split-right">
+    <div style="max-width: 400px; padding: 2rem; border: 1px solid var(--border-color); background-color: var(--bg-app); border-radius: var(--radius-lg);">
+      <h3 style="margin-bottom: 1rem;">System Architecture</h3>
+      <p class="text-sm text-muted" style="margin-bottom: 1.5rem;">ShopCloud is entirely powered by managed AWS serverless infrastructure.</p>
+      
+      <div class="grid">
+        <div class="flex items-center gap-4 p-2">
+          <div style="width: 32px; height: 32px; background: rgba(0, 230, 118, 0.1); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--accent-main);">🔑</div>
+          <div>
+            <div style="font-weight: 600; font-size: 0.875rem;">Authentication</div>
+            <div class="text-muted" style="font-size: 0.75rem;">DynamoDB + JWT</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-4 p-2">
+          <div style="width: 32px; height: 32px; background: rgba(0, 230, 118, 0.1); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--accent-main);">🗄</div>
+          <div>
+            <div style="font-weight: 600; font-size: 0.875rem;">Database</div>
+            <div class="text-muted" style="font-size: 0.75rem;">AWS DynamoDB</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-4 p-2">
+          <div style="width: 32px; height: 32px; background: rgba(0, 230, 118, 0.1); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--accent-main);">⚡</div>
+          <div>
+            <div style="font-weight: 600; font-size: 0.875rem;">Processing</div>
+            <div class="text-muted" style="font-size: 0.75rem;">AWS Lambda</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-4 p-2">
+          <div style="width: 32px; height: 32px; background: rgba(0, 230, 118, 0.1); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--accent-main);">📦</div>
+          <div>
+            <div style="font-weight: 600; font-size: 0.875rem;">Storage</div>
+            <div class="text-muted" style="font-size: 0.75rem;">AWS S3</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/auth.js"></script>
+</body>
+</html>

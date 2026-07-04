@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShopCloud — Order History</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <a href="products.html" class="navbar-brand">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="accent"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+    ShopCloud
+  </a>
+  <ul class="navbar-links">
+    <li><a href="products.html" id="navProducts">Catalog</a></li>
+    <li>
+      <a href="cart.html" id="navCart" style="display: flex; align-items: center; gap: 4px;">
+        Cart <span class="badge" id="cartCountBadge" style="background: var(--accent-main); color: var(--accent-text); border: none;">0</span>
+      </a>
+    </li>
+    <li><a href="receipt.html" class="active" id="navReceipts">Orders</a></li>
+  </ul>
+  <div class="navbar-actions">
+    <button id="themeToggle" onclick="toggleTheme()" class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 1rem; border-color: transparent;">
+      🌗
+    </button>
+    <div style="width: 1px; height: 20px; background-color: var(--border-color);"></div>
+    <div style="font-size: 0.875rem; color: var(--text-muted); cursor: pointer;" onclick="handleLogout()">
+      <span id="userName">User</span> (Logout)
+    </div>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<main class="page-container">
+  <!-- List View -->
+  <div id="listView">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Order History</h1>
+        <p class="text-muted text-sm mt-4">Review past orders securely retrieved from AWS S3.</p>
+      </div>
+    </div>
+
+    <div class="aws-info-bar">
+      <span style="font-weight: 500;">Storage:</span>
+      <span class="aws-tag">Amazon S3</span>
+      <span id="receiptCountInfo" style="margin-left: auto;"></span>
+    </div>
+
+    <!-- Empty state -->
+    <div class="card" id="emptyReceiptState" style="display:none; text-align: center; padding: 4rem 2rem;">
+      <div style="font-size: 2rem; color: var(--text-muted); margin-bottom: 1rem;">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+      </div>
+      <h3 style="margin-bottom: 0.5rem;">No orders found</h3>
+      <p class="text-muted text-sm" style="margin-bottom: 1.5rem;">You haven't placed any orders yet.</p>
+      <a href="products.html" class="btn btn-primary">Browse Catalog</a>
+    </div>
+
+    <!-- Table -->
+    <div class="table-container" id="tableContainer" style="display: none;">
+      <table id="receiptsTable">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Date</th>
+            <th>Size</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="receiptList">
+          <!-- Injected by JS -->
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- Skeletons -->
+    <div class="table-container" id="receiptSkeletons">
+      <table>
+        <thead><tr><th>Order ID</th><th>Date</th><th>Size</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td><div class="skeleton skeleton-text"></div></td><td><div class="skeleton skeleton-text"></div></td><td><div class="skeleton skeleton-text"></div></td><td><div class="skeleton skeleton-btn" style="width: 60px; height: 28px; margin:0;"></div></td></tr>
+          <tr><td><div class="skeleton skeleton-text"></div></td><td><div class="skeleton skeleton-text"></div></td><td><div class="skeleton skeleton-text"></div></td><td><div class="skeleton skeleton-btn" style="width: 60px; height: 28px; margin:0;"></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Detail View -->
+  <div id="detailView" style="display:none; max-width: 600px; margin: 0 auto;">
+    <button onclick="showListView()" class="btn btn-outline" style="margin-bottom: 1.5rem;">← Back to Orders</button>
+
+    <div class="card" style="padding: 2rem;">
+      <div class="flex items-center gap-4" style="margin-bottom: 2rem;">
+        <div style="width: 48px; height: 48px; background: rgba(16, 185, 129, 0.1); color: var(--status-success); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        </div>
+        <div>
+          <h2 style="font-size: 1.25rem; font-weight: 600;">Purchase Confirmed</h2>
+          <div id="receiptId" class="text-mono text-muted text-sm mt-4"></div>
+        </div>
+      </div>
+
+      <!-- Customer Info Grid -->
+      <div style="margin-bottom: 2rem;">
+        <h3 class="form-label">Customer Details</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; padding: 1rem; background: var(--bg-app); border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+          <div>
+            <div class="text-muted text-sm">Name</div>
+            <div id="customerName" style="font-weight: 500;"></div>
+          </div>
+          <div>
+            <div class="text-muted text-sm">Email</div>
+            <div id="customerEmail" style="font-weight: 500;"></div>
+          </div>
+          <div>
+            <div class="text-muted text-sm">Purchase Date</div>
+            <div id="purchaseDate" style="font-weight: 500;"></div>
+          </div>
+          <div>
+            <div class="text-muted text-sm">Status</div>
+            <span class="badge badge-success" style="margin-top: 0.25rem;">COMPLETED</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Items -->
+      <div style="margin-bottom: 2rem;">
+        <h3 class="form-label">Items</h3>
+        <div id="receiptItemsList" style="border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-app);">
+          <!-- Injected by JS -->
+        </div>
+      </div>
+
+      <!-- Totals -->
+      <div style="padding-top: 1rem; border-top: 1px dashed var(--border-color);">
+        <div class="flex justify-between" style="margin-bottom: 0.5rem; font-size: 0.875rem;">
+          <span class="text-muted">Subtotal</span>
+          <span id="receiptSubtotal" class="text-mono"></span>
+        </div>
+        <div class="flex justify-between" style="margin-bottom: 0.5rem; font-size: 0.875rem;">
+          <span class="text-muted">Tax (8%)</span>
+          <span id="receiptTax" class="text-mono"></span>
+        </div>
+        <div class="flex justify-between" style="margin-top: 1rem; font-size: 1.125rem; font-weight: 700;">
+          <span>Total Paid</span>
+          <span id="receiptTotal" class="text-mono" style="color: var(--accent-main);"></span>
+        </div>
+      </div>
+
+      <!-- S3 Info -->
+      <div class="flex items-center gap-2 mt-8" style="font-size: 0.75rem; color: var(--text-muted); background: var(--bg-app); padding: 0.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+        <span class="aws-tag">AWS S3</span>
+        <span id="s3Location" class="text-mono" style="word-break: break-all;"></span>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="js/receipt.js"></script>
+<script>
+  function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+  }
+  const savedTheme = localStorage.getItem('theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+</script>
+</body>
+</html>
