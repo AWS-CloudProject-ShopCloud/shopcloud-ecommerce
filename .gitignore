@@ -31,3 +31,6 @@ desktop.ini
 *.ntvs*
 *.njsproj
 *.sln
+
+*.pem
+*.tar.gz
