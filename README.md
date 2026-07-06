@@ -1,6 +1,9 @@
 # ShopCloud — AWS E-Commerce Project (P2)
 
 <p align="center">
+  <img src="assets/login.png" width="70%" alt="Login Page">
+</p>
+<p align="center">
   <img src="assets/catalog.png" width="48%" alt="Product Catalog">
   <img src="assets/cart.png" width="48%" alt="Cart Checkout">
 </p>
