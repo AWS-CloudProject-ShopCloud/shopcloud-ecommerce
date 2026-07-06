@@ -1,5 +1,10 @@
 # ShopCloud — AWS E-Commerce Project (P2)
 
+<p align="center">
+  <img src="assets/catalog.png" width="48%" alt="Product Catalog">
+  <img src="assets/cart.png" width="48%" alt="Cart Checkout">
+</p>
+
 > A cloud-native e-commerce application built with Node.js/Express using real **AWS SDK v3** services, developed for the AWS Cloud Practitioner course project.
 
 ---
